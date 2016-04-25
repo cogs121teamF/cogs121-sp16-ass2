@@ -14,7 +14,7 @@ dotenv.load();
 
 //connect to database
 var conString = process.env.DATABASE_CONNECTION_URL;
-
+var client =  new pg.Client(conString);
 //Configures the Template engine
 app.engine('html', handlebars({ defaultLayout: 'layout', extname: '.html' }));
 app.set("view engine", "html");
@@ -43,6 +43,26 @@ app.get('/delphidata', function (req, res) {
   // for each gender. 
   // Display that data using D3 with gender on the x-axis and 
   // total respondents on the y-axis.
+  client.connect(function(err) {
+    if(err) {
+      return console.error('could not connect to postgres', err);
+    }
+    console.log("Beginning query...");
+    client.query("SELECT number_of_respondents FROM cogs121_16_raw.cdph_smoking_prevalence_in_adults_1984_2013 WHERE year = 2003 AND gender in ('Female', 'Male', 'Total')", function(err, result) {
+      if(err) {
+        return console.error('error running query', err);
+      }
+      result = result.rows;
+      result[0].gender = "Female";
+      result[1].gender = "Total";
+      result[2].gender = "Male";
+      // console.log(result);
+      //output: Tue Jan 15 2013 19:12:47 GMT-600 (CST)
+      client.end();
+      console.log("Query successful!");
+      res.json(result);
+    });
+  });
   return { delphidata: "No data present." }
 });
 
