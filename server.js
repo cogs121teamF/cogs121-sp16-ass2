@@ -48,14 +48,15 @@ app.get('/delphidata', function (req, res) {
       return console.error('could not connect to postgres', err);
     }
     console.log("Beginning query...");
-    client.query("SELECT number_of_respondents FROM cogs121_16_raw.cdph_smoking_prevalence_in_adults_1984_2013 WHERE year = 2003 AND gender in ('Female', 'Male', 'Total')", function(err, result) {
+    client.query('SELECT lat, lon, "Permit_Nam", "Business_A" FROM cogs121_16_raw.sandag_taqueria_foodretail_project WHERE ABS(lon) > 116.8', function(err, result) {
       if(err) {
         return console.error('error running query', err);
       }
       result = result.rows;
-      result[0].gender = "Female";
-      result[1].gender = "Total";
-      result[2].gender = "Male";
+      //console.log(result);
+      //result[0].gender = "Female";
+      //result[1].gender = "Total";
+      //result[2].gender = "Male";
       // console.log(result);
       //output: Tue Jan 15 2013 19:12:47 GMT-600 (CST)
       client.end();

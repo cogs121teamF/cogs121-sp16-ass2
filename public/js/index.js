@@ -1,165 +1,91 @@
 (function($) {
   "use strict";
 
-  var data = [
-    { name: "Lolita's", rating: 7.5 },
-    { name: "Lucha Libre", rating: 8 },
-    { name: "Puesto", rating: 9.5 },
-    { name: "Rubio's", rating: 4 },
-    { name: "Taco Bell", rating: 3 },
-    { name: "Taco Stand", rating: 8.5 },
-    { name: "Taco's, El Gordo", rating: 9 },
-    { name: "Oscar's", rating: 9 },
-    { name: "Rigoberto's", rating: 6 },
-    { name: "Galaxy Taco", rating: 6.5 },
-  ];
-  
-  var dataRating = []
-  for(var i = 0; i < data.length; i++) {
-    dataRating[i] = data[i].rating;
-  }
-
-
-  // Defining the margins and chart size
-  // See margin conventions for more information
-  var margin = {top: 20, right: 10, bottom: 100, left: 40},
-      width = 960 - margin.right - margin.left,
-      height = 500 - margin.top - margin.bottom;
-
-  var innerWidth  = width  - margin.left - margin.right;
-  var innerHeight = height - margin.top  - margin.bottom;
-
-  // TODO: Input the proper values for the scales
-  var xScale = d3.scale.ordinal().rangeRoundBands([0, width], 0);
-  var yScale = d3.scale.linear().range([height, 0]);
-
-  // Define the chart
-  var chart = d3
-                .select(".chart")
-                .append("svg")
-                .attr("width", width + margin.right + margin.left)
-                .attr("height", height + margin.top + margin.bottom)
-                .append("g")
-                .attr("transform", "translate(" +  margin.left + "," + margin.right + ")");
-
-  // Render the chart
-  xScale.domain(data.map(function (d){ return d.name; }));
-
-  // TODO: Fix the yScale domain to scale with any ratings range
-  yScale.domain([0, d3.max(data,function(d) {return d.rating; })]);
-  
-  // Orient the x and y axis
-  var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
-  var yAxis = d3.svg.axis().scale(yScale).orient("left");
-
-  // TODO: Append X axis
-   chart
-      .append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis)
-      .selectAll("text")
-      .attr("y", 0)
-      .attr("x", -7)
-      .attr("transform", "rotate(-45)")
-      .style("text-anchor", "end");
-
-
-  // TODO: Append Y axis
-   chart.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-
-  // Note all these values are hard coded numbers
-  // TODO:
-  // 1. Consume the taco data
-  // 2. Update the x, y, width, and height attributes to appropriate reflect this
-   chart
-    .selectAll(".bar")
-    // .data([10, 20, 30, 40])
-    .data(data)
-    .enter()
-      .append("rect")
-      .attr("class", "bar")
-      .attr("x", function(d) { return xScale(d.name) + 5; })
-      .attr("width", 90)
-      .attr("y", function(d) { return yScale(d.rating); })
-      .attr("height", function(d) { return height - yScale(d.rating); });
-
-  // ASSIGNMENT PART 1B
-  // Grab the delphi data from the server
-  // SQL Query = SELECT number_of_respondents FROM cogs121_16_raw.cdph_smoking_prevalence_in_adults_1984_2013 WHERE year = 2003 AND gender in ('Female', 'Male', 'Total')
-  d3.json("/delphidata", function(err, data) {
+d3.json("/delphidata", function(err, data) {
       if (err) {
-          console.log(err);
+          console.log("index error: " + err);
           return;
       }
-      console.log("Data", data);
-      // Defining the margins and chart size
-  // See margin conventions for more information
-  var margin = {top: 20, right: 10, bottom: 100, left: 40},
-      width = 960 - margin.right - margin.left,
-      height = 500 - margin.top - margin.bottom;
+      //console.log(data);
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
 
-  var innerWidth  = width  - margin.left - margin.right;
-  var innerHeight = height - margin.top  - margin.bottom;
+// setup x 
+var xValue = function(d) { return d.lon;}, // data -> value
+    xScale = d3.scale.linear().range([0, width]), // value -> display
+    xMap = function(d) { return xScale(xValue(d));}, // data -> display
+    xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
-  // TODO: Input the proper values for the scales
-  var xScale = d3.scale.ordinal().rangeRoundBands([0, width], 0);
-  var yScale = d3.scale.linear().range([height, 0]);
+// setup y
+var yValue = function(d) { return d.lat;}, // data -> value
+    yScale = d3.scale.linear().range([height, 0]), // value -> display
+    yMap = function(d) { return yScale(yValue(d));}, // data -> display
+    yAxis = d3.svg.axis().scale(yScale).orient("left");
 
-  // Define the chart
-  var chart = d3
-                .select(".chart")
-                .append("svg")
-                .attr("width", width + margin.right + margin.left)
-                .attr("height", height + margin.top + margin.bottom)
-                .append("g")
-                .attr("transform", "translate(" +  margin.left + "," + margin.right + ")");
+// add the graph canvas to the body of the webpage
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  // Render the chart
-  xScale.domain(data.map(function (d){ return d.gender; }));
+var tooltip = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
 
-  // TODO: Fix the yScale domain to scale with any ratings range
-  yScale.domain([0, d3.max(data,function(d) {return d.number_of_respondents; })]);
-  
-  // Orient the x and y axis
-  var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
-  var yAxis = d3.svg.axis().scale(yScale).orient("left");
+  // don't want dots overlapping axis, so add in buffer to data domain
+  xScale.domain([d3.min(data, xValue), d3.max(data, xValue)]);
+  yScale.domain([d3.min(data, yValue), d3.max(data, yValue)]);
 
-  // TODO: Append X axis
-   chart
-      .append("g")
+  // x-axis
+  svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis)
-      .selectAll("text")
-      .attr("y", 0)
-      .attr("x", -7)
-      .attr("transform", "rotate(-45)")
-      .style("text-anchor", "end");
+    .append("text")
+      .attr("class", "label")
+      .attr("x", width)
+      .attr("y", -6)
+      .style("text-anchor", "end")
+      .text("Longitude");
 
-
-  // TODO: Append Y axis
-   chart.append("g")
+  // y-axis
+  svg.append("g")
       .attr("class", "y axis")
       .call(yAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Latitude");
 
-  // Note all these values are hard coded numbers
-  // TODO:
-  // 1. Consume the taco data
-  // 2. Update the x, y, width, and height attributes to appropriate reflect this
-   chart
-    .selectAll(".bar")
-    // .data([10, 20, 30, 40])
-    .data(data)
-    .enter()
-      .append("rect")
-      .attr("class", "bar")
-      .attr("x", function(d) { return xScale(d.gender); })
-      .attr("width", 90)
-      .attr("y", function(d) { return yScale(d.number_of_respondents); })
-      .attr("height", function(d) { return height - yScale(d.number_of_respondents); });
-  });
-
+  // draw dots
+  svg.selectAll(".dot")
+      .data(data)
+    .enter().append("circle")
+      .attr("class", "dot")
+      .attr("r", 3.5)
+      .attr("cx", xMap)
+      .attr("cy", yMap)
+      .on("mouseover", function(d) {
+          //console.log("in mouseover func");
+          tooltip.transition()
+               .duration(200)
+               .style("opacity", .9);
+          tooltip.html(d.Permit_Nam + "<br/>" + d.Business_A)
+               .style("float", "right")
+               .style("top", 100 + "px")
+               //.style("left", (d3.event.pageX + 5) + "px")
+               //.style("top", (d3.event.pageY - 28) + "px")
+               .style("font-size", 20 + "px");
+      })
+      .on("mouseout", function(d) {
+          tooltip.transition()
+               .duration(500)
+               .style("opacity", 0);
+      });
+    });      
 })($);
