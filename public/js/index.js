@@ -69,6 +69,8 @@
       .style("text-anchor", "end")
       .text("Latitude");
 
+  var url = "";
+  var ajaxSucceeded = false;
   // draw dots
   svg.selectAll(".dot")
       .data(data)
@@ -100,29 +102,52 @@
               lon: d.lon
             },
             success: function(result) {
-                console.log("INSIDE YELP CALL!!!");
-                console.log(result);
+                // console.log("INSIDE YELP CALL!!!");
+                // console.log(result);
+                ajaxSucceeded = true;
                 tooltip.html(
                   d.Permit_Nam + "<br/>" + d.Business_A + "<br/>" + 
-                  "Rating: " + result.rating + "<br/>")
+                  "Rating: " + result.rating + " " + 
+                  "<img src='" + result.rating_image_url + "'>" + "<br/>" +
+                  "Number of Reviews: " + result.review_count + "<br/>" +
+                  "<img src='" + result.image + "'height='250' width='250'>")
                     .style("float", "right")
                     .style("top", 100 + "px")
                     .style("font-size", 20 + "px");
-                link.html("<a href='" + result.url +"'>" + d.Permit_Nam +"!</a>")
+                /*link.html("<a href='" + result.url +"'>" + d.Permit_Nam +"!</a>")
                     .style("float", "right")
                     .style("top", 500 + "px")
-                    .style("font-size", 20 + "px");
+                    .style("font-size", 20 + "px");*/
+                url = result.url;
+                // .on("click", function(d) {
+                //   window.location.href = result.url;
+                // })
             },
             error: function(xhr) {
               console.log(xhr);
             }
           });
-          console.log("In here?");
+          if (!ajaxSucceeded) {
+            // console.log("In here?WTF");
+            tooltip.html(
+                d.Permit_Nam + "<br/>" + d.Business_A + "<br/>" + 
+                "Finding Yelp results.. (may not show up)<br/>")
+                  .style("float", "right")
+                  .style("top", 100 + "px")
+                  .style("font-size", 20 + "px");
+          }
       })
       .on("mouseout", function(d) {
           tooltip.transition()
                //.duration(500)
                .style("opacity", 0);
+          ajaxSucceeded = false;
+          url = "";
+      })
+      .on("click", function(d) {
+          if (ajaxSucceeded) {
+            window.location.href = url;
+          }
       });
     });      
 })($);
