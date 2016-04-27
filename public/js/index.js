@@ -1,44 +1,51 @@
 (function($) {
   "use strict";
 
-d3.json("/delphidata", function(err, data) {
-      if (err) {
-          console.log("index error: " + err);
-          return;
-      }
-      //console.log(data);
-var margin = {top: 20, right: 20, bottom: 30, left: 40},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+  // function doYelpCall(result) {
 
-// setup x 
-var xValue = function(d) { return d.lon;}, // data -> value
-    xScale = d3.scale.linear().range([0, width]), // value -> display
-    xMap = function(d) { return xScale(xValue(d));}, // data -> display
-    xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+  // }
 
-// setup y
-var yValue = function(d) { return d.lat;}, // data -> value
-    yScale = d3.scale.linear().range([height, 0]), // value -> display
-    yMap = function(d) { return yScale(yValue(d));}, // data -> display
-    yAxis = d3.svg.axis().scale(yScale).orient("left");
+  d3.json("/delphidata", function(err, data) {
+        if (err) {
+            console.log("index error: " + err);
+            return;
+        }
 
-// add the graph canvas to the body of the webpage
-var svg = d3.select("body").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  var margin = {top: 20, right: 20, bottom: 30, left: 40},
+      width = 960 - margin.left - margin.right,
+      height = 500 - margin.top - margin.bottom;
 
-var tooltip = d3.select("body").append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0);
+  // setup x 
+  var xValue = function(d) { return d.lon;}, // data -> value
+      xScale = d3.scale.linear().range([0, width]), // value -> display
+      xMap = function(d) { return xScale(xValue(d));}, // data -> display
+      xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
+  // setup y
+  var yValue = function(d) { return d.lat;}, // data -> value
+      yScale = d3.scale.linear().range([height, 0]), // value -> display
+      yMap = function(d) { return yScale(yValue(d));}, // data -> display
+      yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+  // add the graph canvas to the body of the webpage
+  var svg = d3.select("body").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  var tooltip = d3.select("body").append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
+  var link = d3.select("body").append("div")
+      .attr("class", "link")
+      .style("opacity", 0);
 
   // don't want dots overlapping axis, so add in buffer to data domain
   xScale.domain([d3.min(data, xValue), d3.max(data, xValue)]);
   yScale.domain([d3.min(data, yValue), d3.max(data, yValue)]);
 
-  // x-axis
+  // x-axis LONGITUDE
   svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
@@ -50,7 +57,7 @@ var tooltip = d3.select("body").append("div")
       .style("text-anchor", "end")
       .text("Longitude");
 
-  // y-axis
+  // y-axis LATITUDE
   svg.append("g")
       .attr("class", "y axis")
       .call(yAxis)
@@ -71,20 +78,50 @@ var tooltip = d3.select("body").append("div")
       .attr("cx", xMap)
       .attr("cy", yMap)
       .on("mouseover", function(d) {
-          //console.log("in mouseover func");
+          var taqueriaName = d.Permit_Nam.toLowerCase();
+          taqueriaName = taqueriaName.replace(/[^a-zA-Z-]/g, '');
+          console.log(taqueriaName);
           tooltip.transition()
-               .duration(200)
-               .style("opacity", .9);
+              .duration(500)
+              .style("opacity", .9);
+          link.transition()
+              .duration(500)
+              .style("opacity", .9);
           tooltip.html(d.Permit_Nam + "<br/>" + d.Business_A)
-               .style("float", "right")
-               .style("top", 100 + "px")
-               //.style("left", (d3.event.pageX + 5) + "px")
-               //.style("top", (d3.event.pageY - 28) + "px")
-               .style("font-size", 20 + "px");
+              .style("float", "right")
+              .style("top", 100 + "px")
+              .style("font-size", 20 + "px");
+          $.ajax({
+            url: "/yelpcall",
+            data: {
+              name: taqueriaName,
+              location: d.Address_co,
+              lat: d.lat,
+              lon: d.lon
+            },
+            success: function(result) {
+                console.log("INSIDE YELP CALL!!!");
+                console.log(result);
+                tooltip.html(
+                  d.Permit_Nam + "<br/>" + d.Business_A + "<br/>" + 
+                  "Rating: " + result.rating + "<br/>")
+                    .style("float", "right")
+                    .style("top", 100 + "px")
+                    .style("font-size", 20 + "px");
+                link.html("<a href='" + result.url +"'>" + d.Permit_Nam +"!</a>")
+                    .style("float", "right")
+                    .style("top", 500 + "px")
+                    .style("font-size", 20 + "px");
+            },
+            error: function(xhr) {
+              console.log(xhr);
+            }
+          });
+          console.log("In here?");
       })
       .on("mouseout", function(d) {
           tooltip.transition()
-               .duration(500)
+               //.duration(500)
                .style("opacity", 0);
       });
     });      
