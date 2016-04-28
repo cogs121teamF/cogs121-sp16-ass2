@@ -37,9 +37,9 @@
   var tooltip = d3.select("body").append("div")
       .attr("class", "tooltip")
       .style("opacity", 0);
-  var link = d3.select("body").append("div")
-      .attr("class", "link")
-      .style("opacity", 0);
+  // var link = d3.select("body").append("div")
+  //     .attr("class", "link")
+  //     .style("opacity", 0);
 
   // don't want dots overlapping axis, so add in buffer to data domain
   xScale.domain([d3.min(data, xValue), d3.max(data, xValue)]);
@@ -80,13 +80,15 @@
       .attr("cx", xMap)
       .attr("cy", yMap)
       .on("mouseover", function(d) {
+          d3.select(this)
+            .style("r", 7)
+            .style("stroke", "green")
+            .style("stroke-width", "3")
+            //.style("border-color", "red");
           var taqueriaName = d.Permit_Nam.toLowerCase();
           taqueriaName = taqueriaName.replace(/[^a-zA-Z-]/g, '');
           console.log(taqueriaName);
           tooltip.transition()
-              .duration(500)
-              .style("opacity", .9);
-          link.transition()
               .duration(500)
               .style("opacity", .9);
           tooltip.html(d.Permit_Nam + "<br/>" + d.Business_A)
@@ -141,6 +143,10 @@
           tooltip.transition()
                //.duration(500)
                .style("opacity", 0);
+          d3.select(this)
+            .style("r", 3.5)
+            .style("stroke", "black")
+            .style("stroke-width", "0");
           ajaxSucceeded = false;
           url = "";
       })
