@@ -30,3 +30,21 @@ body {
   pointer-events: none;
   background-color: white;
 }
+
+#info {
+  font-size: 18px;
+  font-family: sans-serif;
+  align-content: center;
+}
+
+#logo {
+  display: inline-block;
+  font-size: 2rem;
+  height: 50px;
+  line-height: 50px;
+}
+#title-pad {
+  padding-bottom: 20px;
+  vertical-align: middle;
+  display: inline-block;
+}

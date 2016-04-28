@@ -2,8 +2,13 @@
 <div class="navbar-fixed">
 <nav>
    <div class="nav-wrapper">
-     <img src="img/logo.png">
-     <a href="#" class="brand-logo center">Taco de Town</a>
+     <a href="#" class="brand-logo center"><img id="logo" src="img/logo.png"> <div id="title-pad">Taco de Town</div></a>
+     <ul class="right hide-on-med-and-down">
+        <li><a href="help.html">
+          <i class="material-icons tooltipped" data-position="bottom" data-delay="50"
+          data-tooltip="Click on any point to see restaurant information and popularity">info_outline</i>
+        </a></li>
+      </ul>
    </div>
  </nav>
  </div>
@@ -12,12 +17,17 @@
       <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
       <!--Import materialize.css-->
       <link type="text/css" rel="stylesheet" href="/css/materialize.css"  media="screen,projection"/>
-
+      <!-- link material icons -->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
       <!--Let browser know website is optimized for mobile-->
       <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body>
 <div class="chart"></div>
+<blockquote id="info">
+  All uber drivers are looking for a high demand area. One such high demand area = places with a lot of taco shops. With our visual data,
+  you can know where to go and grab a taco while you're at it.
+</blockquote>
 </body>
 <script src="https://code.jquery.com/jquery.js"></script>
 <script type="text/javascript" src="/js/materialize.min.js"></script>
