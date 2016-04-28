@@ -1,5 +1,6 @@
 body {
   font: 11px sans-serif;
+  font-family: "avenir"; 
 }
 
 .axis path,
@@ -35,6 +36,8 @@ body {
   font-size: 18px;
   font-family: sans-serif;
   align-content: center;
+  padding-left: 50px; 
+  padding-right: 50px; 
 }
 
 #logo {
@@ -47,4 +50,8 @@ body {
   padding-bottom: 20px;
   vertical-align: middle;
   display: inline-block;
+}
+#section-background {
+  background-color: #FFB0BA; 
+
 }
