@@ -15,7 +15,7 @@
       width = 960 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
 
-  // setup x 
+  // setup x
   var xValue = function(d) { return d.lon;}, // data -> value
       xScale = d3.scale.linear().range([0, width]), // value -> display
       xMap = function(d) { return xScale(xValue(d));}, // data -> display
@@ -31,15 +31,16 @@
   var svg = d3.select("body").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
+      .attr("class", "graph-svg-component")
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   var tooltip = d3.select("body").append("div")
       .attr("class", "tooltip")
       .style("opacity", 0);
-  var link = d3.select("body").append("div")
-      .attr("class", "link")
-      .style("opacity", 0);
+  // var link = d3.select("body").append("div")
+  //     .attr("class", "link")
+  //     .style("opacity", 0);
 
   // don't want dots overlapping axis, so add in buffer to data domain
   xScale.domain([d3.min(data, xValue), d3.max(data, xValue)]);
@@ -80,18 +81,21 @@
       .attr("cx", xMap)
       .attr("cy", yMap)
       .on("mouseover", function(d) {
+          d3.select(this)
+            .style("r", 7)
+            .style("stroke", "green")
+            .style("stroke-width", "3")
+      })
+      .on("click", function(d) {
           var taqueriaName = d.Permit_Nam.toLowerCase();
           taqueriaName = taqueriaName.replace(/[^a-zA-Z-]/g, '');
           console.log(taqueriaName);
           tooltip.transition()
               .duration(500)
               .style("opacity", .9);
-          link.transition()
-              .duration(500)
-              .style("opacity", .9);
-          tooltip.html(d.Permit_Nam + "<br/>" + d.Business_A)
+          tooltip.html('<div class="preloader-wrapper big active"> <div class="spinner-layer spinner-green-only"> <div class="circle-clipper left"> <div class="circle"></div> </div><div class="gap-patch"> <div class="circle"></div> </div><div class="circle-clipper right"> <div class="circle"></div> </div> </div> </div>')
               .style("float", "right")
-              .style("top", 100 + "px")
+              .style("top", 150 + "px")
               .style("font-size", 20 + "px");
           $.ajax({
             url: "/yelpcall",
@@ -102,52 +106,36 @@
               lon: d.lon
             },
             success: function(result) {
-                // console.log("INSIDE YELP CALL!!!");
-                // console.log(result);
                 ajaxSucceeded = true;
                 tooltip.html(
-                  d.Permit_Nam + "<br/>" + d.Business_A + "<br/>" + 
-                  "Rating: " + result.rating + " " + 
-                  "<img src='" + result.rating_image_url + "'>" + "<br/>" +
-                  "Number of Reviews: " + result.review_count + "<br/>" +
-                  "<img src='" + result.image + "'height='250' width='250'>")
+                  '<div class="card"> <div class="card-image"> <img src="' +result.image+'" height="250" width="250"> <span class="card-title">'+d.Permit_Nam+'</span> </div> <div class="card-content">'+ d.Business_A + "<br/>" + "Rating: " + result.rating + " " + "<img src='" + result.rating_image_url + "'>" + "<br/>" + "Number of Reviews: " + result.review_count + "<br/>" + 
+                  '</div> </div>')
                     .style("float", "right")
                     .style("top", 100 + "px")
                     .style("font-size", 20 + "px");
-                /*link.html("<a href='" + result.url +"'>" + d.Permit_Nam +"!</a>")
-                    .style("float", "right")
-                    .style("top", 500 + "px")
-                    .style("font-size", 20 + "px");*/
                 url = result.url;
-                // .on("click", function(d) {
-                //   window.location.href = result.url;
-                // })
             },
             error: function(xhr) {
               console.log(xhr);
             }
           });
           if (!ajaxSucceeded) {
-            // console.log("In here?WTF");
-            tooltip.html(
-                d.Permit_Nam + "<br/>" + d.Business_A + "<br/>" + 
-                "Finding Yelp results.. (may not show up)<br/>")
-                  .style("float", "right")
-                  .style("top", 100 + "px")
-                  .style("font-size", 20 + "px");
+              tooltip.html('<div class="preloader-wrapper big active"> <div class="spinner-layer spinner-green-only"> <div class="circle-clipper left"> <div class="circle"></div> </div><div class="gap-patch"> <div class="circle"></div> </div><div class="circle-clipper right"> <div class="circle"></div> </div> </div> </div>')
+              .style("float", "right")
+              .style("top", 100 + "px")
+              .style("font-size", 20 + "px");
           }
       })
       .on("mouseout", function(d) {
-          tooltip.transition()
-               //.duration(500)
-               .style("opacity", 0);
+          // tooltip.transition()
+          //      //.duration(500)
+          //      .style("opacity", 0);
+          d3.select(this)
+            .style("r", 3.5)
+            .style("stroke", "black")
+            .style("stroke-width", "0");
           ajaxSucceeded = false;
           url = "";
       })
-      .on("click", function(d) {
-          if (ajaxSucceeded) {
-            window.location.href = url;
-          }
-      });
     });      
 })($);
