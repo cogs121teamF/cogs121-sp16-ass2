@@ -83,7 +83,7 @@
       .on("mouseover", function(d) {
           d3.select(this)
             .style("r", 7)
-            .style("stroke", "green")
+            .style("stroke", "79c62a")
             .style("stroke-width", "3")
       })
       .on("click", function(d) {
@@ -108,7 +108,7 @@
             success: function(result) {
                 ajaxSucceeded = true;
                 tooltip.html(
-                  '<div class="card"> <div class="card-image"> <img src="' +result.image+'" height="250" width="250"> <span class="card-title">'+d.Permit_Nam+'</span> </div> <div class="card-content">'+ d.Business_A + "<br/>" + "Rating: " + result.rating + " " + "<img src='" + result.rating_image_url + "'>" + "<br/>" + "Number of Reviews: " + result.review_count + "<br/>" + 
+                  '<div class="card"> <div class="card-image"> <img src="' +result.image+'" height="250" width="250"> <span class="card-title">'+d.Permit_Nam+'</span> </div> <div class="card-content">'+ d.Business_A + "<br/>" + "Rating: " + result.rating + " " + "<img src='" + result.rating_image_url + "'>" + "<br/>" + "Number of Reviews: " + result.review_count + "<br/>" +
                   '</div> </div>')
                     .style("float", "right")
                     .style("top", 100 + "px")
@@ -137,5 +137,5 @@
           ajaxSucceeded = false;
           url = "";
       })
-    });      
+    });
 })($);
