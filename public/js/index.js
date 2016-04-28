@@ -95,7 +95,7 @@
               .style("opacity", .9);
           tooltip.html('<div class="preloader-wrapper big active"> <div class="spinner-layer spinner-green-only"> <div class="circle-clipper left"> <div class="circle"></div> </div><div class="gap-patch"> <div class="circle"></div> </div><div class="circle-clipper right"> <div class="circle"></div> </div> </div> </div>')
               .style("float", "right")
-              .style("top", 150 + "px")
+              .style("top", 200 + "px")
               .style("font-size", 20 + "px");
           $.ajax({
             url: "/yelpcall",
@@ -111,7 +111,7 @@
                   '<div class="card"> <div class="card-image"> <img src="' +result.image+'" height="250" width="250"> <span class="card-title">'+d.Permit_Nam+'</span> </div> <div class="card-content">'+ d.Business_A + "<br/>" + "Rating: " + result.rating + " " + "<img src='" + result.rating_image_url + "'>" + "<br/>" + "Number of Reviews: " + result.review_count + "<br/>" +
                   '</div> </div>')
                     .style("float", "right")
-                    .style("top", 100 + "px")
+                    .style("top", 125 + "px")
                     .style("font-size", 20 + "px");
                 url = result.url;
             },
@@ -122,7 +122,7 @@
           if (!ajaxSucceeded) {
               tooltip.html('<div class="preloader-wrapper big active"> <div class="spinner-layer spinner-green-only"> <div class="circle-clipper left"> <div class="circle"></div> </div><div class="gap-patch"> <div class="circle"></div> </div><div class="circle-clipper right"> <div class="circle"></div> </div> </div> </div>')
               .style("float", "right")
-              .style("top", 100 + "px")
+              .style("top", 200 + "px")
               .style("font-size", 20 + "px");
           }
       })
