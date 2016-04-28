@@ -15,7 +15,7 @@
       width = 960 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
 
-  // setup x 
+  // setup x
   var xValue = function(d) { return d.lon;}, // data -> value
       xScale = d3.scale.linear().range([0, width]), // value -> display
       xMap = function(d) { return xScale(xValue(d));}, // data -> display
@@ -79,7 +79,7 @@
       .attr("r", 3.5)
       .attr("cx", xMap)
       .attr("cy", yMap)
-      .on("mouseover", function(d) {
+      .on("click", function(d) {
           var taqueriaName = d.Permit_Nam.toLowerCase();
           taqueriaName = taqueriaName.replace(/[^a-zA-Z-]/g, '');
           console.log(taqueriaName);
@@ -89,7 +89,7 @@
           link.transition()
               .duration(500)
               .style("opacity", .9);
-          tooltip.html(d.Permit_Nam + "<br/>" + d.Business_A)
+          tooltip.html('<div class="preloader-wrapper big active"> <div class="spinner-layer spinner-green-only"> <div class="circle-clipper left"> <div class="circle"></div> </div><div class="gap-patch"> <div class="circle"></div> </div><div class="circle-clipper right"> <div class="circle"></div> </div> </div> </div>')
               .style("float", "right")
               .style("top", 100 + "px")
               .style("font-size", 20 + "px");
@@ -106,11 +106,14 @@
                 // console.log(result);
                 ajaxSucceeded = true;
                 tooltip.html(
-                  d.Permit_Nam + "<br/>" + d.Business_A + "<br/>" + 
-                  "Rating: " + result.rating + " " + 
-                  "<img src='" + result.rating_image_url + "'>" + "<br/>" +
-                  "Number of Reviews: " + result.review_count + "<br/>" +
-                  "<img src='" + result.image + "'height='250' width='250'>")
+                  '<div class="card"> <div class="card-image"> <img src="' +result.image+'" height="250" width="250"> <span class="card-title">'+d.Permit_Nam+'</span> </div> <div class="card-content">'+ d.Business_A + "<br/>" + "Rating: " + result.rating + " " + "<img src='" + result.rating_image_url + "'>" + "<br/>" + "Number of Reviews: " + result.review_count + "<br/>" +'</div> <div class="card-action"> <a href="'+
+                  result.url +'">View on Yelp</a> </div> </div>')
+                // tooltip.html(
+                //   d.Permit_Nam + "<br/>" + d.Business_A + "<br/>" +
+                //   "Rating: " + result.rating + " " +
+                //   "<img src='" + result.rating_image_url + "'>" + "<br/>" +
+                //   "Number of Reviews: " + result.review_count + "<br/>" +
+                //   "<img src='" + result.image + "'height='250' width='250'>")
                     .style("float", "right")
                     .style("top", 100 + "px")
                     .style("font-size", 20 + "px");
@@ -129,25 +132,23 @@
           });
           if (!ajaxSucceeded) {
             // console.log("In here?WTF");
-            tooltip.html(
-                d.Permit_Nam + "<br/>" + d.Business_A + "<br/>" + 
-                "Finding Yelp results.. (may not show up)<br/>")
-                  .style("float", "right")
-                  .style("top", 100 + "px")
-                  .style("font-size", 20 + "px");
+            tooltip.html('<div class="preloader-wrapper big active"> <div class="spinner-layer spinner-green-only"> <div class="circle-clipper left"> <div class="circle"></div> </div><div class="gap-patch"> <div class="circle"></div> </div><div class="circle-clipper right"> <div class="circle"></div> </div> </div> </div>')
+            .style("float", "right")
+            .style("top", 100 + "px")
+            .style("font-size", 20 + "px");;
           }
       })
-      .on("mouseout", function(d) {
-          tooltip.transition()
-               //.duration(500)
-               .style("opacity", 0);
-          ajaxSucceeded = false;
-          url = "";
-      })
-      .on("click", function(d) {
-          if (ajaxSucceeded) {
-            window.location.href = url;
-          }
-      });
-    });      
+      // .on("mouseout", function(d) {
+      //     tooltip.transition()
+      //          //.duration(500)
+      //          .style("opacity", 1);
+      //     ajaxSucceeded = false;
+      //     url = "";
+      // })
+      // .on("click", function(d) {
+      //     if (ajaxSucceeded) {
+      //       window.location.href = url;
+      //     }
+      // });
+    });
 })($);
