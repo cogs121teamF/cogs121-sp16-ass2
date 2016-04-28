@@ -91,7 +91,7 @@
               .style("opacity", .9);
           tooltip.html('<div class="preloader-wrapper big active"> <div class="spinner-layer spinner-green-only"> <div class="circle-clipper left"> <div class="circle"></div> </div><div class="gap-patch"> <div class="circle"></div> </div><div class="circle-clipper right"> <div class="circle"></div> </div> </div> </div>')
               .style("float", "right")
-              .style("top", 100 + "px")
+              .style("top", 150 + "px")
               .style("font-size", 20 + "px");
           $.ajax({
             url: "/yelpcall",
@@ -132,10 +132,16 @@
           });
           if (!ajaxSucceeded) {
             // console.log("In here?WTF");
-            tooltip.html('<div class="preloader-wrapper big active"> <div class="spinner-layer spinner-green-only"> <div class="circle-clipper left"> <div class="circle"></div> </div><div class="gap-patch"> <div class="circle"></div> </div><div class="circle-clipper right"> <div class="circle"></div> </div> </div> </div>')
-            .style("float", "right")
-            .style("top", 100 + "px")
-            .style("font-size", 20 + "px");;
+              tooltip.html('<div class="preloader-wrapper big active"> <div class="spinner-layer spinner-green-only"> <div class="circle-clipper left"> <div class="circle"></div> </div><div class="gap-patch"> <div class="circle"></div> </div><div class="circle-clipper right"> <div class="circle"></div> </div> </div> </div>')
+              .style("float", "right")
+              .style("top", 100 + "px")
+              .style("font-size", 20 + "px");
+              // setTimeout(function() {
+              //   tooltip.html('<h1>Test</h1><div class="preloader-wrapper big active"> <div class="spinner-layer spinner-green-only"> <div class="circle-clipper left"> <div class="circle"></div> </div><div class="gap-patch"> <div class="circle"></div> </div><div class="circle-clipper right"> <div class="circle"></div> </div> </div> </div><h1>This might never load</h1>')
+              //       .style("float", "right")
+              //       .style("top", 100 + "px")
+              //       .style("font-size", 20 + "px");
+              // }, 3000);
           }
       })
       // .on("mouseout", function(d) {
