@@ -48,7 +48,7 @@ app.get('/delphidata', function (req, res) {
       return console.error('could not connect to postgres', err);
     }
     console.log("Beginning query...");
-    client.query('SELECT lat, lon, "Permit_Nam", "Business_A" FROM cogs121_16_raw.sandag_taqueria_foodretail_project WHERE ABS(lon) > 116.8', function(err, result) {
+    client.query('SELECT lat, lon, "Permit_Nam", "Business_A", "Address_co" FROM cogs121_16_raw.sandag_taqueria_foodretail_project WHERE ABS(lon) > 116.8', function(err, result) {
       if(err) {
         return console.error('error running query', err);
       }
@@ -65,6 +65,52 @@ app.get('/delphidata', function (req, res) {
     });
   });
   return { delphidata: "No data present." }
+});
+
+app.get('/yelpcall', function (req, res) {
+  // Request API access: http://www.yelp.com/developers/getting_started/api_access
+  var Yelp = require('yelp');
+
+  var yelp = new Yelp({
+    consumer_key: '1FJDwPwRUG92MrMMW7XALg',
+    consumer_secret: 'yWh_HLaaXxItjgAsrBMPEB7sY3E',
+    token: 'teGc5nu4M9Dg1nB7_-YkfY3E4qE7b4Bb',
+    token_secret: 'LXmuL0T16f1mvTnzINCS9d65D88',
+  });
+
+  // See http://www.yelp.com/developers/documentation/v2/search_api
+  //var lat = "32.7309,117.2243";
+  yelp.search({ 
+    location: req.query.location, 
+    cll: "" + req.query.lat + "," + req.query.lon + ""
+  })
+  .then(function (data) {
+    //console.log("Inside function");
+    // var json = JSON.parse(data);
+    //console.log(data['businesses']);
+    for(var x in data['businesses']) {
+      // console.log(data['businesses'][x]['name']);
+      var businessName = data['businesses'][x]['name'].toLowerCase();
+      businessName = businessName.replace(/[^a-zA-Z-]/g, '');
+      //console.log(businessName);
+      if(businessName.indexOf(req.query.name) > -1 ) {
+        console.log(data['businesses'][x]['name']);
+        var jsonReturn = {
+          "name": data['businesses'][x]['name'],
+          "url": data['businesses'][x]['url'],
+          "image": data['businesses'][x]['image_url'],
+          "review_count": data['businesses'][x]['review_count'],
+          "rating": data['businesses'][x]['rating'],
+          "rating_image_url": data['businesses'][x]['rating_img_url'],
+        }
+        res.json(jsonReturn);
+      }
+    }
+    //res.json(data);
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
 });
 
 
