@@ -83,7 +83,7 @@
       .on("mouseover", function(d) {
           d3.select(this)
             .style("r", 7)
-            .style("stroke", "green")
+            .style("stroke", "79c62a")
             .style("stroke-width", "3")
       })
       .on("click", function(d) {
