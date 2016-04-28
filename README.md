@@ -19,7 +19,8 @@ The graph is displayed using latitude and longitude, and the nodes are displayed
 Constraints:
 We incorporated the use of dots to limit where the user can hover because it is based on location. This ensures that the user has a sense of how far each location is from each other. Also, we have added the functionality that the user can click on a dot, then display a card on the right-hand side. This ensures that the user can still interact with the map, and gain insight on each location.
 
-Error Prevention/Recovery:
+#####Error Prevention/Recovery:
+There is a disclaimer to users in the help button letting them know if a tooltip takes a long time to load it may be that Yelp doesn’t have information for that taco shop and will never load. 
 
 ### DESIGN DECISIONS
 
